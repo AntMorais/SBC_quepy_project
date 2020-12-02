@@ -1,22 +1,11 @@
-import pickle
-import subprocess
-import main
 import json
 import sys
+import process_files
+import main
+import clustering
 
 dataset_json = json.load(open("data/qald-6-train-multilingual.json"))
 
-
-#write to json files
-def write_to_json_files(questions_dict_not_generated, questions_dict_no_answer, questions_dict_answer, metrics):
-    with open('data/questions_not_generated.json', 'w') as fout:
-        json.dump(questions_dict_not_generated, fout)
-    with open('data/questions_no_answer.json', 'w') as fout:
-        json.dump(questions_dict_no_answer, fout)
-    with open('data/questions_answer.json', 'w') as fout:
-        json.dump(questions_dict_answer, fout)
-    with open('data/metrics.json', 'w') as fout:
-        json.dump(metrics, fout)
 
 
 def process_questions():
@@ -45,13 +34,10 @@ def process_questions():
 
     # question_list has a specific question in every language
     for question_list in questions_json:
-        if question_list['id'] != "126":
-            continue
         # question_dict has question dictionary
         question_dict = [q for q in question_list['question'] if q['language']=='en'][0]
         # question is the question string
         question = question_dict['string']
-
 
         # the question has no answers
         if not question_list['answers']:
@@ -149,7 +135,7 @@ def process_questions():
         "recall": global_recall,
         "f_measure": f_measure
     }
-    write_to_json_files(questions_dict_not_generated, questions_dict_no_answer, questions_dict_answer, metrics)
+    process_files.write_to_json_files(questions_dict_not_generated, questions_dict_no_answer, questions_dict_answer, metrics)
 
 
 
@@ -157,3 +143,38 @@ def process_questions():
 
 if __name__ == "__main__":
     process_questions()
+    not_generated_questions = process_files.read_questions("data/questions_not_generated.json")
+    category_summary={
+        'question_types': [],
+        'question_prefixes': [],
+        'category_list': []
+    }
+    category={
+        'question_type': "",
+        'question_prefix': "",
+        'question_list': []
+    }
+
+    for question in not_generated_questions:
+        tagged_words = clustering.simple_tag_words(question)
+        first_word = tagged_words[0][0]
+        if first_word not in category_summary['question_prefixes']:
+            category={
+                'question_type': "",
+                'question_prefix': first_word,
+                'question_list': [question]
+            }
+            category_summary['question_prefixes'].append(first_word)
+            category_summary['category_list'].append(category)
+        else:
+            for cat in category_summary['category_list']:
+                if cat['question_prefix']==first_word:
+                    cat['question_list'].append(question)
+
+
+    import pprint
+    pp=pprint.PrettyPrinter(indent=4)
+    pp.pprint(category_summary)
+
+
+
