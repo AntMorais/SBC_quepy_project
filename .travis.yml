@@ -1,0 +1,19 @@
+language: python
+python:
+ - 2.7
+ 
+
+install: 
+  - pip install -U pytest setuptools wheel
+  - python setup.py install
+  - python -m nltk.downloader wordnet
+  - python -m nltk.downloader averaged_perceptron_tagger
+
+script:
+  - pytest
+
+deploy:
+  provider: pypi
+  user: $PYPI_USER
+  distributions: sdist bdist_wheel
+  password: $PYPI_PASS

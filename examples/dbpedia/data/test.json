@@ -1,0 +1,43 @@
+{
+  "dataset": {
+    "id": "qald-6-test-multilingual"
+  },
+  "questions": [
+    {
+      "id": 1,
+      "answertype": "resource",
+      "aggregation": "false",
+      "onlydbo": "true",
+      "hybrid": "false",
+      "question": [
+        {
+          "language": "en",
+          "string": "Who was the doctoral supervisor of Albert Einstein?",
+          "keywords": "doctoral supervisor, Albert Einstein"
+        }
+      ],
+      "query": {
+        "sparql": "SELECT DISTINCT ?uri WHERE { <http://dbpedia.org/resource/Albert_Einstein> <http://dbpedia.org/ontology/doctoralAdvisor> ?uri . }"
+      },
+      "answers": [
+        {
+          "head": {
+            "vars": [
+              "uri"
+            ]
+          },
+          "results": {
+            "bindings": [
+              {
+                "uri": {
+                  "type": "uri",
+                  "value": "http://dbpedia.org/resource/Alfred_Kleiner"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
