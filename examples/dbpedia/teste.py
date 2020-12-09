@@ -171,10 +171,14 @@ if __name__ == "__main__":
                 if cat['question_prefix']==first_word:
                     cat['question_list'].append(question)
 
+    # sort category_list by length of question_list
+
+
 
     import pprint
     pp=pprint.PrettyPrinter(indent=4)
-    pp.pprint(category_summary)
+    sorted_categories = sorted(category_summary['category_list'], key=lambda k: len(k['question_list'])) 
+    pp.pprint(sorted_categories)
 
 
 
