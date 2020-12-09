@@ -19,8 +19,16 @@ HasKeyword.language = "en"
 
 
 # -----------------------------------------------ADDED---------------------------------------------------
-#class IsFictionalCharacter(FixedType):
-#    fixedtype = "dbo:"
+class IsFictionalCharacter(FixedType):
+    fixedtype = "dbpedia-owl:FictionalCharacter"
+
+class IsAnimal(FixedType):
+    fixedtype = "dbpedia-owl:Animal"
+
+class StarsAs(FixedRelation):
+    relation = "dbpedia-owl:portrayer"
+    reverse = True
+
 
 
 # -----------------------------------------------ADDED---------------------------------------------------
@@ -145,6 +153,7 @@ class ReleaseDateOf(FixedRelation):
 class StarsIn(FixedRelation):
     relation = "dbpprop:starring"
     reverse = True
+
 
 
 class NumberOfEpisodesIn(FixedRelation):

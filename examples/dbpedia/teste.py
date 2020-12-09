@@ -88,8 +88,7 @@ def process_questions():
             # Print results of the query
             import pprint
             pp=pprint.PrettyPrinter(indent=4)
-            #pp.pprint(results)
-            
+            pp.pprint(results)
             # TODO isto deve estar mal, temos de ir a answer type == resource
             answer_head_type = correct_answer_dict['head']['vars'][0]
             correct_results_dict = correct_answer_dict['results']['bindings']
@@ -97,14 +96,19 @@ def process_questions():
             # only keep english results
             query_results_dict = [el for el in query_results_dict_all_languages if el[target]['xml:lang']=='en']
             # identifier of the entity we want
-            variable_name = str(target_entity[1:])
+            uri_variable_name = str(target_entity[1:])
+            # label variable in the instances where the value returned in literal (mistake)
+            label_variable_name = target
+
             # correct values from json data
             correct_results_values = [el[answer_head_type]['value'] for el in correct_results_dict]
-            # list of values returned by query
-            list_query_values = [el[variable_name]['value'] for el in query_results_dict]
-            
+            # list of uris returned by query
+            list_query_uris = [el[uri_variable_name]['value'] for el in query_results_dict]
+            list_query_labels = [el[label_variable_name]['value'] for el in query_results_dict]
             # number of correct answers
-            number_correct_answers = sum(el in correct_results_values for el in list_query_values)
+            number_correct_answers_uris = sum(el in correct_results_values for el in list_query_uris)
+            number_correct_answers_labels = sum(el in correct_results_values for el in list_query_labels)
+            number_correct_answers = number_correct_answers_uris if number_correct_answers_uris>=number_correct_answers_labels else number_correct_answers_labels
             # number of answers in the gold standard
             number_gold_answers = len(correct_results_dict)
             # number of answers returned by the system
@@ -118,6 +122,10 @@ def process_questions():
             
             #print_handlers[query_type](results, target, metadata)
             #print
+
+
+
+
 
     global_precision = float(global_precision) / num_questions
     global_recall = float(global_recall) / num_questions
@@ -135,7 +143,7 @@ def process_questions():
         "recall": global_recall,
         "f_measure": f_measure
     }
-    process_files.write_to_json_files(questions_dict_not_generated, questions_dict_no_answer, questions_dict_answer, metrics)
+    #process_files.write_to_json_files(questions_dict_not_generated, questions_dict_no_answer, questions_dict_answer, metrics)
 
 
 
@@ -143,6 +151,7 @@ def process_questions():
 
 if __name__ == "__main__":
     process_questions()
+    """
     not_generated_questions = process_files.read_questions("data/questions_not_generated.json")
     category_summary={
         'question_types': [],
@@ -179,6 +188,6 @@ if __name__ == "__main__":
     pp=pprint.PrettyPrinter(indent=4)
     sorted_categories = sorted(category_summary['category_list'], key=lambda k: len(k['question_list'])) 
     pp.pprint(sorted_categories)
-
+    """
 
 

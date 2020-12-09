@@ -16,9 +16,76 @@ from quepy.dsl import HasKeyword
 from quepy.parsing import Lemma, Lemmas, Pos, QuestionTemplate, Particle
 from dsl import IsMovie, NameOf, IsPerson, \
     DirectedBy, LabelOf, DurationOf, HasActor, HasName, ReleaseDateOf, \
-    DirectorOf, StarsIn, DefinitionOf
+    DirectorOf, StarsIn, DefinitionOf, StarsAs, IsFictionalCharacter
 
 nouns = Plus(Pos("NN") | Pos("NNS") | Pos("NNP") | Pos("NNPS"))
+
+
+
+
+
+
+
+
+
+
+
+
+#-------------------------------------------ADDED PARTICLES-------------------------------------------------------------------------
+
+
+class FictionalCharacter(Particle):
+    regex = nouns
+
+    def interpret(self, match):
+        name = match.words.tokens
+        return IsFictionalCharacter() + HasKeyword(name)
+
+
+#-------------------------------------PARTICLES FROM OTHER FILES-------------------------------------------------------------------
+
+class Person(Particle):
+    regex = Plus(Pos("NN") | Pos("NNS") | Pos("NNP") | Pos("NNPS"))
+
+    def interpret(self, match):
+        name = match.words.tokens
+        return IsPerson() + HasKeyword(name)
+
+
+
+
+#-------------------------------------------ADDED CLASSES-------------------------------------------------------------------------
+
+#Question/Regex Handler (subclass of QuestionTemplate)
+class ActorPortrayedCharacter(QuestionTemplate):
+    """
+    Ex: "Which actor played Chewbacca?"
+        "Who played Agent Smith in the Matrix?"
+    """
+
+    acted = (Lemma("appear") | Lemma("act") | Lemma("star") | Lemma("play") | Lemma("portray"))
+    movie = (Lemma("movie") | Lemma("movies") | Lemma("film"))
+    regex = (Lemma("which") + Lemma("actor") + acted + Person() + Question(Pos(".")))
+
+    #The target variable matches \
+    # a string that will be passed on to the semantics -> interpret\
+    # to make part of the final query. 
+    #target = Question(Pos("DT")) + Group(Pos("NN"), "target")
+
+    #Returns the intermediate representation of the Regex
+    def interpret(self, match):
+        actor = NameOf(IsPerson() + StarsAs(match.person))
+        return actor, "enum"
+        
+
+
+
+#-------------------------------------------ADDED CLASSES-------------------------------------------------------------------------
+
+
+
+
+
 
 
 class Movie(Particle):
@@ -43,6 +110,18 @@ class Director(Particle):
     def interpret(self, match):
         name = match.words.tokens
         return IsPerson() + HasKeyword(name)
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 class ListMoviesQuestion(QuestionTemplate):

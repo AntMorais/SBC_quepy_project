@@ -14,14 +14,6 @@ nouns = Plus(Pos("NN") | Pos("NNS") | Pos("NNP") | Pos("NNPS"))
 
 
 
-class Movie(Particle):
-    regex = Question(Pos("DT")) + nouns
-
-    def interpret(self, match):
-        name = match.words.tokens
-        return IsMovie() + HasName(name)
-
-
 
 class FictionalCharacter(Particle):
     regex = nouns
