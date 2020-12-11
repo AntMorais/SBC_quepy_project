@@ -1,4 +1,4 @@
-refo
-nltk
 SPARQLWrapper
 docopt
+nltk
+refo

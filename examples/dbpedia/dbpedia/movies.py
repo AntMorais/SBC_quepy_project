@@ -16,7 +16,8 @@ from quepy.dsl import HasKeyword
 from quepy.parsing import Lemma, Lemmas, Pos, QuestionTemplate, Particle
 from dsl import IsMovie, NameOf, IsPerson, \
     DirectedBy, LabelOf, DurationOf, HasActor, HasName, ReleaseDateOf, \
-    DirectorOf, StarsIn, DefinitionOf, StarsAs, IsFictionalCharacter
+    DirectorOf, StarsIn, DefinitionOf, StarsAs, IsFictionalCharacter,  IsThing, HasNationality, Created,\
+        IsCompany, IsSoftware, IsBook, AuthorOf
 
 nouns = Plus(Pos("NN") | Pos("NNS") | Pos("NNP") | Pos("NNPS"))
 
@@ -42,6 +43,27 @@ class FictionalCharacter(Particle):
         return IsFictionalCharacter() + HasKeyword(name)
 
 
+
+
+class Nationality(Particle):
+    regex = nouns
+
+    def interpret(self, match):
+        name = match.words.tokens
+        return HasKeyword(name)
+
+
+
+
+class Company(Particle):
+    regex = Plus(Pos("NN") | Pos("NNS") | Pos("NNP") | Pos("NNPS"))
+
+    def interpret(self, match):
+        name = match.words.tokens
+        return IsCompany() + HasKeyword(name)
+
+
+
 #-------------------------------------PARTICLES FROM OTHER FILES-------------------------------------------------------------------
 
 class Person(Particle):
@@ -51,6 +73,14 @@ class Person(Particle):
         name = match.words.tokens
         return IsPerson() + HasKeyword(name)
 
+
+
+class Book(Particle):
+    regex = Plus(nouns)
+
+    def interpret(self, match):
+        name = match.words.tokens
+        return IsBook() + HasKeyword(name)
 
 
 
@@ -65,7 +95,7 @@ class ActorPortrayedCharacter(QuestionTemplate):
 
     acted = (Lemma("appear") | Lemma("act") | Lemma("star") | Lemma("play") | Lemma("portray"))
     movie = (Lemma("movie") | Lemma("movies") | Lemma("film"))
-    regex = (Lemma("which") + Lemma("actor") + acted + Person() + Question(Pos(".")))
+    regex = (Lemma("which") + (Lemma("actor") | Lemma("actress"))  + acted + Person() + Question(Pos(".")))
 
     #The target variable matches \
     # a string that will be passed on to the semantics -> interpret\
@@ -74,9 +104,58 @@ class ActorPortrayedCharacter(QuestionTemplate):
 
     #Returns the intermediate representation of the Regex
     def interpret(self, match):
-        actor = NameOf(IsPerson() + StarsAs(match.person))
-        return actor, "enum"
+        actor = IsPerson() + StarsAs(match.person)
+        actor_name = NameOf(actor)
+        return actor_name, "enum"
         
+
+class GiveMeAllNationalityObject(QuestionTemplate):
+    """
+    Ex: "Give me all Danish movies.
+    + Question(Pos("DT") + Lemma("list") + Pos("IN"))
+    """
+
+        
+    regex = (Lemma("give") + Lemma("me")  + Lemma("all")  + Nationality() + Lemma("movie") +  Question(Pos(".")))
+
+
+    #The target variable matches \
+    # a string that will be passed on to the semantics -> interpret\
+    # to make part of the final query. 
+    #target = Question(Pos("DT")) + Group(Pos("NN"), "target")
+
+    #Returns the intermediate representation of the Regex
+    def interpret(self, match):
+        movie = IsMovie() + HasNationality(match.nationality)
+        movie_name = NameOf(movie)
+        return actor_name, "enum"
+        
+
+
+class WhoCreatedX(QuestionTemplate):
+    """
+    Ex: "Who created Facebook?
+    """
+
+    regex = (Lemma("who") + (Lemma("create") | Lemma("develop"))  + Company() +  Question(Pos(".")))
+
+
+    #The target variable matches \
+    # a string that will be passed on to the semantics -> interpret\
+    # to make part of the final query. 
+    #target = Question(Pos("DT")) + Group(Pos("NN"), "target")
+
+    #Returns the intermediate representation of the Regex
+    def interpret(self, match):
+        #creator = ( IsPerson() | IsCompany() ) + ( Created(match.creation) | ProducerOf(match.creation))
+        creator = IsPerson() + Created(match.company) 
+        creator_name = NameOf(creator)
+        return creator_name, "enum"
+        
+
+
+
+
 
 
 

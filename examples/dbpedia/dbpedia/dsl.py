@@ -25,8 +25,42 @@ class IsFictionalCharacter(FixedType):
 class IsAnimal(FixedType):
     fixedtype = "dbpedia-owl:Animal"
 
+    
+
+class IsThing(FixedType):
+    fixedtype = "dbpedia-owl:Thing"
+
+
+
+class IsCompany(FixedType):
+    fixedtype = "dbpedia-owl:Company"
+
+
+class IsSoftware(FixedType):
+    fixedtype = "dbpedia-owl:Software"
+
+
+
+
+
 class StarsAs(FixedRelation):
     relation = "dbpedia-owl:portrayer"
+    reverse = True
+
+
+
+class HasNationality(FixedRelation):
+    relation = "dbpedia-owl:country"
+
+
+
+class HasNationality(FixedRelation):
+    relation = "dbpedia-owl:country"
+
+
+
+class Created(FixedRelation):
+    relation = "dbpedia-owl:foundedBy"
     reverse = True
 
 

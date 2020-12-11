@@ -14,10 +14,13 @@ docs/parsing.rst
 docs/quepy.rst
 docs/reference.rst
 docs/tutorial.rst
+examples/dbpedia/clustering.py
 examples/dbpedia/main.py
+examples/dbpedia/process_files.py
 examples/dbpedia/teste.py
 examples/dbpedia/data/jsonToPython.py
 examples/dbpedia/dbpedia/__init__.py
+examples/dbpedia/dbpedia/additional_questions.py
 examples/dbpedia/dbpedia/basic.py
 examples/dbpedia/dbpedia/country.py
 examples/dbpedia/dbpedia/dsl.py

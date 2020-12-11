@@ -122,9 +122,6 @@ class QuepyApp(object):
         question = encoding_flexible_conversion(question)
         for expression, userdata in self._iter_compiled_forms(question):
             target, query, target_entity = generation.get_code(expression, self.language)
-            print(target)
-            print(query)
-            print(target_entity)
             message = u"Interpretation {1}: {0}"
             logger.debug(message.format(str(expression),
                          expression.rule_used))

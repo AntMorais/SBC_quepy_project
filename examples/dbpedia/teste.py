@@ -5,11 +5,72 @@ import main
 import clustering
 
 dataset_json = json.load(open("data/qald-6-train-multilingual.json"))
+test_questions =  open("data/test_questions.txt", "r")
 
 
 
-def process_questions():
+def process_test_questions():
+    lines = test_questions.readlines()
 
+
+    # question_list has a specific question in every language
+    for question in lines:
+
+        print question
+        print "-" * len(question)
+
+        target, query, metadata, target_entity = main.dbpedia.get_query(question)
+          
+
+        if isinstance(metadata, tuple):
+            query_type = metadata[0]
+            metadata = metadata[1]
+        else:
+            query_type = metadata
+            metadata = None
+
+        if query is None:
+            print("No query generated! :(")
+            continue
+
+        print("----------------------------------------------")
+        print query
+        
+
+        if target.startswith("?"):
+            target = target[1:]
+        if query:
+            main.sparql.setQuery(query)
+            main.sparql.setReturnFormat(main.JSON)
+            results = main.sparql.query().convert()
+
+            if not results["results"]["bindings"]:
+                print "No answer found :("
+                num_no_answer += 1
+                continue
+
+
+            # Print results of the query
+            import pprint
+            pp=pprint.PrettyPrinter(indent=4)
+            # TODO isto deve estar mal, temos de ir a answer type == resource
+            query_results_dict_all_languages = results["results"]["bindings"]
+            # only keep english results
+            query_results_dict = [el for el in query_results_dict_all_languages if el[target]['xml:lang']=='en']
+            # identifier of the entity we want
+            uri_variable_name = str(target_entity[1:])
+            # label variable in the instances where the value returned in literal (mistake)
+            label_variable_name = target
+            # list of uris returned by query
+            list_query_uris = [el[uri_variable_name]['value'] for el in query_results_dict]
+            print("Answers: :)")
+            pp.pprint(list_query_uris)
+
+
+
+
+
+def process_qald_questions():
     questions_json = dataset_json['questions']
     print_handlers = {
             "define": main.print_define,
@@ -37,8 +98,9 @@ def process_questions():
         # question_dict has question dictionary
         question_dict = [q for q in question_list['question'] if q['language']=='en'][0]
         # question is the question string
-        question = question_dict['string']
+        #question = question_dict['string']
 
+        question = "Who wrote Wikipedia?"
         # the question has no answers
         if not question_list['answers']:
             num_questions -= 1
@@ -50,7 +112,7 @@ def process_questions():
         #print "-" * len(question)
 
         target, query, metadata, target_entity = main.dbpedia.get_query(question)
-
+          
 
         if isinstance(metadata, tuple):
             query_type = metadata[0]
@@ -143,14 +205,17 @@ def process_questions():
         "recall": global_recall,
         "f_measure": f_measure
     }
-    #process_files.write_to_json_files(questions_dict_not_generated, questions_dict_no_answer, questions_dict_answer, metrics)
+    process_files.write_to_json_files(questions_dict_not_generated, questions_dict_no_answer, questions_dict_answer, metrics)
 
 
 
 
 
 if __name__ == "__main__":
-    process_questions()
+    if sys.argv[1] == "qald":
+        process_qald_questions()
+    elif sys.argv[1] == "test":
+        process_test_questions()
     """
     not_generated_questions = process_files.read_questions("data/questions_not_generated.json")
     category_summary={
@@ -166,7 +231,7 @@ if __name__ == "__main__":
 
     for question in not_generated_questions:
         tagged_words = clustering.simple_tag_words(question)
-        first_word = tagged_words[0][0]
+        first_word = [tagged_words[0][0], tagged_words[1][0], tagged_words[2][0]]
         if first_word not in category_summary['question_prefixes']:
             category={
                 'question_type': "",
