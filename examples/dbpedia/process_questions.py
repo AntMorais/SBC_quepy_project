@@ -53,10 +53,13 @@ def process_test_questions(test_questions):
             import pprint
             pp=pprint.PrettyPrinter(indent=4)
             pp.pprint(results)
-            # TODO isto deve estar mal, temos de ir a answer type == resource
+
+
             query_results_dict_all_languages = results["results"]["bindings"]
 
-            if query_results_dict_all_languages[0][target]['type'] == 'typed-literal':
+            # if we received a string or a uri, the variable we want to print is Target
+            if query_results_dict_all_languages[0][target]['type'] == 'typed-literal' or \
+                query_results_dict_all_languages[0][target]['type'] == 'uri':
                 # If we are receiving a string, keep everything
                 query_results_dict = query_results_dict_all_languages
                 # identifier of the entity we want
@@ -66,6 +69,8 @@ def process_test_questions(test_questions):
                 query_results_dict = [el for el in query_results_dict_all_languages if el[target]['xml:lang']=='en']
                 # identifier of the entity we want
                 uri_variable_name = str(target_entity[1:])
+
+
             
             # list of uris returned by query
             list_query_uris = [el[uri_variable_name]['value'] for el in query_results_dict]

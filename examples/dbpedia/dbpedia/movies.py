@@ -185,7 +185,6 @@ class WhoCreatedXCompany(QuestionTemplate):
     regex = (Lemma("who") + Lemma("create")  + Company() +  Question(Pos(".")))
     #Returns the intermediate representation of the Regex
     def interpret(self, match):
-        #creator = IsPerson() + (Created(match.classe) + AuthorOf(match.classe)) 
         creator = IsPerson() + Founded(match.company)
         creator_name = NameOf(creator)
         return creator_name, "enum"
@@ -215,7 +214,6 @@ class WhoIsGovernorOf(QuestionTemplate):
     #Returns the intermediate representation of the Regex
     def interpret(self, match):
         creator_name = GovernorOf(match.populatedplace)
-        #creator_name = NameOf(creator)
         return creator_name, "enum"
 
 
