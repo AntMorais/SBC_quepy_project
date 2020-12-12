@@ -14,10 +14,11 @@ Movie related regex.
 from refo import Plus, Question
 from quepy.dsl import HasKeyword
 from quepy.parsing import Lemma, Lemmas, Pos, QuestionTemplate, Particle
-from dsl import IsMovie, NameOf, IsPerson, \
+from dsl import *
+"""IsMovie, NameOf, IsPerson, \
     DirectedBy, LabelOf, DurationOf, HasActor, HasName, ReleaseDateOf, \
     DirectorOf, StarsIn, DefinitionOf, StarsAs, IsFictionalCharacter,  IsThing, HasNationality, Created,\
-        IsCompany, IsSoftware, IsBook, AuthorOf
+        IsCompany, IsSoftware, IsBook, AuthorOf, IsClass, Created, CapitalOf"""
 
 nouns = Plus(Pos("NN") | Pos("NNS") | Pos("NNP") | Pos("NNPS"))
 
@@ -44,13 +45,20 @@ class FictionalCharacter(Particle):
 
 
 
-
 class Nationality(Particle):
     regex = nouns
 
     def interpret(self, match):
         name = match.words.tokens
         return HasKeyword(name)
+
+
+class Thing(Particle):
+    regex = Question(Pos("JJ")) + (Pos("NN") | Pos("NNP") | Pos("NNS")) |\
+            Pos("VBN")
+
+    def interpret(self, match):
+        return HasKeyword(match.words.tokens)
 
 
 
@@ -61,6 +69,28 @@ class Company(Particle):
     def interpret(self, match):
         name = match.words.tokens
         return IsCompany() + HasKeyword(name)
+
+
+
+
+class Classe(Particle):
+    regex = Question(Pos("JJ")) + (Pos("NN") | Pos("NNP") | Pos("NNS")) |\
+            Pos("VBN")
+
+    def interpret(self, match):
+        return IsClass() + HasKeyword(match.words.tokens)
+
+
+
+
+
+
+class PopulatedPlace(Particle):
+    regex = Plus(Pos("DT") | Pos("NN") | Pos("NNS") | Pos("NNP") | Pos("NNPS"))
+
+    def interpret(self, match):
+        name = match.words.tokens.title()
+        return IsPopulatedPlace() + HasKeyword(name)
 
 
 
@@ -134,11 +164,84 @@ class GiveMeAllNationalityObject(QuestionTemplate):
 
 class WhoCreatedX(QuestionTemplate):
     """
-    Ex: "Who created Facebook?
+    Ex: "Who created Batman?"
     """
+    create = Lemma("create")
+    regex = (Lemma("who") + Lemma("create")  + Thing() +  Question(Pos(".")))
+    #Returns the intermediate representation of the Regex
+    def interpret(self, match):
+        #creator = IsPerson() + (Created(match.classe) + AuthorOf(match.classe)) 
+        creator = IsPerson() + Created(match.thing)
+        creator_name = NameOf(creator)
+        return creator_name, "enum"
 
-    regex = (Lemma("who") + (Lemma("create") | Lemma("develop"))  + Company() +  Question(Pos(".")))
 
+
+class WhoCreatedXCompany(QuestionTemplate):
+    """
+    Ex: "Who created Batman?"
+    """
+    create = Lemma("create")
+    regex = (Lemma("who") + Lemma("create")  + Company() +  Question(Pos(".")))
+    #Returns the intermediate representation of the Regex
+    def interpret(self, match):
+        #creator = IsPerson() + (Created(match.classe) + AuthorOf(match.classe)) 
+        creator = IsPerson() + Founded(match.company)
+        creator_name = NameOf(creator)
+        return creator_name, "enum"
+        
+        
+
+
+class WhoIsMayorOf(QuestionTemplate):
+    """
+    Ex: "Who is the mayor of Tel Aviv?
+    """
+    regex = (Lemma("who") + Lemma("be")  + Pos("DT") + Lemma("mayor") + Pos("IN") + PopulatedPlace() +  Question(Pos(".")))
+    #Returns the intermediate representation of the Regex
+    def interpret(self, match):
+        creator = IsPerson() + LeaderOf(match.populatedplace)
+        creator_name = NameOf(creator)
+        return creator_name, "enum"
+
+
+
+
+class WhoIsGovernorOf(QuestionTemplate):
+    """
+    Ex: "Who is the governor of Wyoming?
+    """
+    regex = (Lemma("who") + Lemma("be")  + Pos("DT") + Lemma("governor") + Pos("IN") + PopulatedPlace() +  Question(Pos(".")))
+    #Returns the intermediate representation of the Regex
+    def interpret(self, match):
+        creator_name = GovernorOf(match.populatedplace)
+        #creator_name = NameOf(creator)
+        return creator_name, "enum"
+
+
+"""
+class WhoIsMayorOfCapitalOf(QuestionTemplate):
+    #Ex: "Who is the mayor of Ottawa?
+    
+    create = Lemma("create")
+    regex = (Lemma("who") + Lemma("createeeee")  + Thing() +  Question(Pos(".")))
+    #Returns the intermediate representation of the Regex
+    def interpret(self, match):
+        #creator = IsPerson() + (Created(match.classe) + AuthorOf(match.classe)) 
+        creator = IsPerson() + Created(match.thing)
+        creator_name = NameOf(creator)
+        return creator_name, "enum"
+
+        """
+
+
+"""
+class WhoCreatedXEncyclopedia(QuestionTemplate):
+    
+    #Ex: "Who created Wikipedia?
+    
+
+    regex = (Lemma("who") + (Lemma("create") | Lemma("develop"))  + Book() +  Question(Pos(".")))
 
     #The target variable matches \
     # a string that will be passed on to the semantics -> interpret\
@@ -147,11 +250,13 @@ class WhoCreatedX(QuestionTemplate):
 
     #Returns the intermediate representation of the Regex
     def interpret(self, match):
-        #creator = ( IsPerson() | IsCompany() ) + ( Created(match.creation) | ProducerOf(match.creation))
-        creator = IsPerson() + Created(match.company) 
+        creator = IsPerson() + AuthorOf(match.book) 
         creator_name = NameOf(creator)
         return creator_name, "enum"
         
+"""
+
+
 
 
 

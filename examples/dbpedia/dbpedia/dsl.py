@@ -40,7 +40,13 @@ class IsSoftware(FixedType):
     fixedtype = "dbpedia-owl:Software"
 
 
+class IsClass(FixedType):
+    fixedtype = "dbpedia-owl:Class"
 
+
+
+class IsCity(FixedType):
+    fixedtype = "dbpedia-owl:City"
 
 
 class StarsAs(FixedRelation):
@@ -54,15 +60,32 @@ class HasNationality(FixedRelation):
 
 
 
-class HasNationality(FixedRelation):
-    relation = "dbpedia-owl:country"
-
-
 
 class Created(FixedRelation):
+    relation = "dbpedia-owl:creator"
+    reverse = True
+
+
+
+class Founded(FixedRelation):
     relation = "dbpedia-owl:foundedBy"
     reverse = True
 
+
+
+
+class MayorOf(FixedRelation):
+    relation = "dbpedia:mayor"
+    reverse = True
+
+class LeaderOf(FixedRelation):
+    relation = "dbpedia-owl:leaderName"
+    reverse = True
+
+
+class GovernorOf(FixedRelation):
+    relation = "dbpprop:governor"
+    reverse= True
 
 
 # -----------------------------------------------ADDED---------------------------------------------------
@@ -108,6 +131,9 @@ class HasShowName(FixedDataRelation):
 class HasName(FixedDataRelation):
     relation = "dbpprop:name"
     language = "en"
+
+
+
 
 
 class DefinitionOf(FixedRelation):
