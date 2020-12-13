@@ -16,7 +16,6 @@ def process_test_questions(test_questions):
 
 
         print("|------------------------------------------------------------------------------------------------------|")
-
         print("|------------------------------------------------------------------------------------------------------|")
         print question
 
@@ -109,9 +108,8 @@ def process_qald_questions(dataset_json):
         # question_dict has question dictionary
         question_dict = [q for q in question_list['question'] if q['language']=='en'][0]
         # question is the question string
-        #question = question_dict['string']
+        question = question_dict['string']
 
-        question = "Who wrote Wikipedia?"
         # the question has no answers
         if not question_list['answers']:
             num_questions -= 1

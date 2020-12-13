@@ -27,6 +27,14 @@ class IsAnimal(FixedType):
 
     
 
+class IsMusicalWork(FixedType):
+    fixedtype = "dbpedia-owl:MusicalWork"
+
+
+class IsWork(FixedType):
+    fixedtype = "dbpedia-owl:Work"
+
+
 class IsThing(FixedType):
     fixedtype = "dbpedia-owl:Thing"
 
@@ -53,12 +61,24 @@ class StarsAs(FixedRelation):
     relation = "dbpedia-owl:portrayer"
     reverse = True
 
-
+class HasNickname(FixedDataRelation):
+    relation = "foaf:nick"
+    language = "en"
 
 class HasNationality(FixedRelation):
     relation = "dbpedia-owl:country"
 
 
+
+
+class DeathPlaceOf(FixedRelation):
+    relation = "dbpedia-owl:deathPlace"
+    reverse = True
+
+
+class WriterOfSong(FixedRelation):
+    relation = "dbpedia-owl:writer"
+    reverse = True
 
 
 class Created(FixedRelation):
@@ -68,11 +88,27 @@ class Created(FixedRelation):
 
 
 class Founded(FixedRelation):
-    relation = "dbpedia-owl:foundedBy"
+    relation = "dbpprop:founders"
     reverse = True
 
 
 
+class CapitalOf(FixedRelation):
+    relation = "dbpedia-owl:capital"
+    reverse = True
+
+
+
+
+class HasFoafName(FixedDataRelation):
+    relation = "foaf:name"
+    language = "en"
+
+
+
+class ComposerOf(FixedRelation):
+    relation = "dbpedia-owl:musicComposer"
+    reverse = True
 
 class MayorOf(FixedRelation):
     relation = "dbpedia:mayor"
@@ -86,6 +122,13 @@ class LeaderOf(FixedRelation):
 class GovernorOf(FixedRelation):
     relation = "dbpprop:governor"
     reverse= True
+
+
+class OwnerOf(FixedRelation):
+    relation = "dbpprop:owner"
+    reverse= True
+
+
 
 
 # -----------------------------------------------ADDED---------------------------------------------------
@@ -237,7 +280,6 @@ class CreatorOf(FixedRelation):
 
 class NameOf(FixedRelation):
     relation = "foaf:name"
-    # relation = "dbpprop:name"
     reverse = True
 
 

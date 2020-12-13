@@ -15,7 +15,7 @@ Writers related regex.
 from refo import Plus, Question
 from quepy.dsl import HasKeyword
 from quepy.parsing import Lemma, Lemmas, Pos, QuestionTemplate, Particle
-from dsl import IsBook, HasAuthor, AuthorOf, IsPerson, NameOf
+from dsl import IsBook, HasAuthor, AuthorOf, IsPerson, NameOf, IsWork
 
 
 nouns = Pos("DT") | Pos("IN") | Pos("NN") | Pos("NNS") | Pos("NNP") | Pos("NNPS")
@@ -28,6 +28,14 @@ class Book(Particle):
         name = match.words.tokens
         return IsBook() + HasKeyword(name)
 
+class Work(Particle):
+    regex = Plus(nouns)
+
+    def interpret(self, match):
+        name = match.words.tokens
+        return IsWork() + HasKeyword(name)
+
+
 
 class Author(Particle):
     regex = Plus(nouns | Lemma("."))
@@ -37,13 +45,22 @@ class Author(Particle):
         return IsPerson() + HasKeyword(name)
 
 
+
+class Thing(Particle):
+    regex =  nouns
+
+    def interpret(self, match):
+        return HasKeyword(match.words.tokens.title())
+
+
 class WhoWroteQuestion(QuestionTemplate):
     """
     Ex: "who wrote The Little Prince?"
         "who is the author of A Game Of Thrones?"
+        "Who wrote the book the Pillars of the Earth"
     """
 
-    regex = ((Lemmas("who write") + Book()) |
+    regex = ((Lemmas("who write") + Question(Pos("DT") + Lemma("book")) + Book()) |
              (Question(Lemmas("who be") + Pos("DT")) +
               Lemma("author") + Pos("IN") + Book())) + \
             Question(Pos("."))

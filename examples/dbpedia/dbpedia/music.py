@@ -95,3 +95,10 @@ class AlbumsOfQuestion(QuestionTemplate):
         album = IsAlbum() + ProducedBy(match.band)
         name = NameOf(album)
         return name, "enum"
+
+
+
+
+
+
+

@@ -101,7 +101,6 @@ class QuepyApp(object):
         The query returned corresponds to the first regex that matches in
         weight order.
         """
-
         question = question_sanitize(question)
         for target, query, userdata, target_entity in self.get_queries(question):
             return target, query, userdata, target_entity

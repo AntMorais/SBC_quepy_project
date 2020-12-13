@@ -54,15 +54,16 @@ class ListEntity(QuestionTemplate):
 
     entity = Group(Pos("NNP"), "entity")
     target = Group(Pos("NN") | Pos("NNS"), "target")
-    regex = LISTOPEN + entity + target
+    regex = LISTOPEN + entity + target 
 
     def interpret(self, match):
         entity = HasKeyword(match.entity.tokens)
         target_type = HasKeyword(match.target.lemmas)
         target = HasType(target_type) + IsRelatedTo(entity)
         label = LabelOf(target)
-
         return label, "enum"
+
+
 
 
 class WhatTimeIs(QuestionTemplate):
@@ -92,8 +93,7 @@ class WhereIsQuestion(QuestionTemplate):
     Ex: "where in the world is the Eiffel Tower"
     """
 
-    thing = Group(Plus(Pos("IN") | Pos("NP") | Pos("NNP") | Pos("NNPS")),
-                  "thing")
+    thing = Group(Plus(Pos("IN") | Pos("NP") | Pos("NNP") | Pos("NNPS")),"thing")
     regex = Lemma("where") + Question(Lemmas("in the world")) + Lemma("be") + \
         Question(Pos("DT")) + thing + Question(Pos("."))
 
