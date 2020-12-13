@@ -5,18 +5,35 @@ import main
 import clustering
 import process_questions
 
-dataset_json = json.load(open("data/qald-6-train-multilingual.json"))
+train_qald_json = json.load(open("data/qald-6-train-multilingual.json"))
+test_qald_json = json.load(open("data/qald-6-test-multilingual.json"))
+train_and_test_qald_json = json.load(open("data/qald-6-train-and-test-multilingual.json"))
 test_questions =  open("data/test_questions.txt", "r")
-
+config_file = json.load(open("print_config.json"))
 
 
 
 
 if __name__ == "__main__":
+    if sys.argv[3] == "print":
+        print_flag = True
+    elif sys.argv[2] == "noprint":
+        print_flag = False
+    
+    # possible values: train, test or both (only for qald)
     if sys.argv[1] == "qald":
-        process_questions.process_qald_questions(dataset_json)
+        if sys.argv[2] == "train":
+            dataset_json = train_qald_json
+        elif sys.argv[2] == "test":
+            dataset_json = test_qald_json
+        elif sys.argv[2] == "both":
+            dataset_json = train_and_test_qald_json
+        process_questions.process_qald_questions(dataset_json, config_file, print_flag)
     elif sys.argv[1] == "test":
-        process_questions.process_test_questions(test_questions)
+        process_questions.process_test_questions(test_questions, config_file, print_flag)
+    
+    
+
     """
     not_generated_questions = process_files.read_questions("data/questions_not_generated.json")
     category_summary={

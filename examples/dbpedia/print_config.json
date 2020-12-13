@@ -1,0 +1,10 @@
+{
+    "question":false,
+    "query":false,
+    "results":false,
+    "show_answers":false,
+    "answered":false,
+    "not_answered":false,
+    "not_generated":false,
+    "metrics":false
+}
