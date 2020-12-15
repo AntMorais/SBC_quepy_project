@@ -9,7 +9,7 @@ train_qald_json = json.load(open("data/qald-6-train-multilingual.json"))
 test_qald_json = json.load(open("data/qald-6-test-multilingual.json"))
 train_and_test_qald_json = json.load(open("data/qald-6-train-and-test-multilingual.json"))
 test_questions =  open("data/test_questions.txt", "r")
-config_file = json.load(open("print_config.json"))
+config_file = json.load(open("config.json"))
 
 
 

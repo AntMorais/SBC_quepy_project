@@ -120,6 +120,7 @@ def process_qald_questions(dataset_json, config_file, print_flag):
     no_answers_flag = config_file['not_answered']
     not_gen_flag = config_file['not_generated']
     metrics_flag = config_file['metrics']
+    write_flag = config_file['write']
     if not print_flag:
         question_flag = False
         query_flag = False
@@ -252,7 +253,8 @@ def process_qald_questions(dataset_json, config_file, print_flag):
         "recall": global_recall,
         "f_measure": f_measure
     }
-    process_files.write_to_json_files(questions_dict_not_generated, questions_dict_no_answer, questions_dict_answer, metrics)
+    if (write_flag):
+        process_files.write_to_json_files(questions_dict_not_generated, questions_dict_no_answer, questions_dict_answer, metrics)
 
 
 
@@ -276,7 +278,7 @@ def calculate_metrics(correct_answer_dict, results, target, target_entity, answe
         query_results_dict = [el for el in query_results_dict_all_languages if el[target]['xml:lang']=='en']
         # identifier of the entity we want
         uri_variable_name = str(target_entity[1:])
-    # label variable in the instances where the value returned in literal (mistake)
+    # label variable in the instances where the value returned is a literal (mistake)
     label_variable_name = target
     # correct values from json data
     correct_results_values = [el[answer_head_type]['value'] for el in correct_results_dict]

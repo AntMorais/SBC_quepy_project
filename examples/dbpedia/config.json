@@ -9,5 +9,6 @@
     "metrics":false,
     "group":true,
     "group_number":3,
-    "categories":true
+    "categories":true,
+    "write":true
 }
