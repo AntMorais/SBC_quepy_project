@@ -6,5 +6,8 @@
     "answered":false,
     "not_answered":false,
     "not_generated":false,
-    "metrics":false
+    "metrics":false,
+    "group":true,
+    "group_number":3,
+    "categories":true
 }
