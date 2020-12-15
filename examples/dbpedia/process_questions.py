@@ -136,10 +136,10 @@ def process_qald_questions(dataset_json, config_file, print_flag):
     questions_json = dataset_json['questions']
     
 
-
     num_questions = len(questions_json)
     num_not_generated = 0
     num_no_answer = 0
+    num_not_valid = 0
 
     global_precision = 0
     global_recall = 0
@@ -160,6 +160,7 @@ def process_qald_questions(dataset_json, config_file, print_flag):
 
         # the question has no answers
         if not question_list['answers']:
+            num_not_valid += 1
             num_questions -= 1
             continue
         correct_answer_dict = question_list['answers'][0]
@@ -234,24 +235,38 @@ def process_qald_questions(dataset_json, config_file, print_flag):
 
     global_precision = float(global_precision) / num_questions
     global_recall = float(global_recall) / num_questions
+    len(questions_dict_answer)
     try:
-        f_measure = (2*global_precision*global_recall)/(global_precision+global_recall)
+        f_measure_global = (2*global_precision*global_recall)/(global_precision+global_recall)
+    except ZeroDivisionError:
+        print("There are no correct answers")
+        f_measure_global = 0
+    num_questions_answered = len(questions_dict_answer)
+    global_precision_answered = float(global_precision) / num_questions_answered
+    global_recall_answered = float(global_recall) / num_questions_answered
+    try:
+        f_measure = (2*global_precision_answered*global_recall_answered)/(global_precision_answered+global_recall_answered)
     except ZeroDivisionError:
         print("There are no correct answers")
         f_measure = 0
 
+
+
     if (metrics_flag):
-        print("Precision------>"+str(global_precision))
-        print("Recall--------->"+str(global_recall))
-        print("F-measure------>"+str(f_measure))
+        print("Precision---------->"+str(global_precision))
+        print("Recall------------->"+str(global_recall))
+        print("F-measure---------->"+str(f_measure_global))
+        print("F-measure Global--->"+str(f_measure_global))
         print("Number of not generated------>"+str(len(questions_dict_not_generated)))
-        print("Number of no answer------>"+str(len(questions_dict_no_answer)))
-        print("Number of answered------>"+str(len(questions_dict_answer)))
+        print("Number of no answer---------->"+str(len(questions_dict_no_answer)))
+        print("Number of answered----------->"+str(len(questions_dict_answer)))
+        print("Number of not valid---------->"+str(num_not_valid))
     
     metrics = {
         "precision": global_precision,
         "recall": global_recall,
-        "f_measure": f_measure
+        "f_measure" : f_measure,
+        "f_measure_global": f_measure_global
     }
     if (write_flag):
         process_files.write_to_json_files(questions_dict_not_generated, questions_dict_no_answer, questions_dict_answer, metrics)

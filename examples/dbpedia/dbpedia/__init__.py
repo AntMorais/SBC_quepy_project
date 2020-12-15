@@ -14,6 +14,7 @@ DBpedia quepy.
 from basic import *
 from music import *
 from movies import *
+from additional_questions import *
 from people import *
 from country import *
 from populated_place import *
