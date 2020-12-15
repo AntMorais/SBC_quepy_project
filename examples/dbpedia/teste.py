@@ -31,6 +31,7 @@ if __name__ == "__main__":
         elif sys.argv[3] == "noprint":
             print_flag = False    
         process_questions.process_qald_questions(dataset_json, config_file, print_flag)
+        clustering.group_questions(config_file, print_flag)
     elif sys.argv[1] == "test":
         
         if sys.argv[2] == "print":
@@ -39,7 +40,8 @@ if __name__ == "__main__":
             print_flag = False    
         process_questions.process_test_questions(test_questions, config_file, print_flag)
     
-    clustering.group_questions(config_file, print_flag)
+
+    
 
     
 
