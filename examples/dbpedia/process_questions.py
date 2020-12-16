@@ -29,8 +29,6 @@ def process_test_questions(test_questions, config_file, print_flag):
     pp=pprint.PrettyPrinter(indent=4)
     # question_list has a specific question in every language
     for question in lines:
-
-
         
 
         target, query, metadata, target_entity = main.dbpedia.get_query(question)

@@ -94,7 +94,7 @@ class PopulatedPlace(Particle):
 #-------------------------------------PARTICLES FROM OTHER FILES-------------------------------------------------------------------
 
 class Person(Particle):
-    regex = Plus(Pos("NN") | Pos("NNS") | Pos("NNP") | Pos("NNPS") | Pos("."))
+    regex = Plus(Pos("NN") | Pos("NNS") | Pos("NNP") | Pos("NNPS") )
     def interpret(self, match):
         name = match.words.tokens
         return IsPerson() + HasKeyword(name)
@@ -124,7 +124,6 @@ class ActorPortrayedCharacter(QuestionTemplate):
 
     acted = (Lemma("appear") | Lemma("act") | Lemma("star") | \
             Lemma("play") | Lemma("portray"))
-    movie = (Lemma("movie") | Lemma("movies") | Lemma("film"))
     regex = (Lemma("which") + (Lemma("actor") | Lemma("actress")) \
             + acted + Person() + Question(Pos(".")))
 
