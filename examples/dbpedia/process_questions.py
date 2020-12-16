@@ -232,12 +232,11 @@ def process_qald_questions(dataset_json, config_file, print_flag):
 
 
 
-
-    global_precision = float(global_precision) / num_questions
-    global_recall = float(global_recall) / num_questions
+    global_precision_total = float(global_precision) / num_questions
+    global_recall_total = float(global_recall) / num_questions
     len(questions_dict_answer)
     try:
-        f_measure_global = (2*global_precision*global_recall)/(global_precision+global_recall)
+        f_measure_global = (2*global_precision_total*global_recall_total)/(global_precision_total+global_recall_total)
     except ZeroDivisionError:
         print("There are no correct answers")
         f_measure_global = 0
@@ -253,9 +252,9 @@ def process_qald_questions(dataset_json, config_file, print_flag):
 
 
     if (metrics_flag):
-        print("Precision---------->"+str(global_precision))
-        print("Recall------------->"+str(global_recall))
-        print("F-measure---------->"+str(f_measure_global))
+        print("Precision---------->"+str(global_precision_answered))
+        print("Recall------------->"+str(global_recall_answered))
+        print("F-measure---------->"+str(f_measure))
         print("F-measure Global--->"+str(f_measure_global))
         print("Number of not generated------>"+str(len(questions_dict_not_generated)))
         print("Number of no answer---------->"+str(len(questions_dict_no_answer)))

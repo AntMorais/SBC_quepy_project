@@ -1,14 +1,14 @@
 {
-    "question":true,
-    "query":true,
-    "results":true,
-    "show_answers":true,
-    "answered":true,
-    "not_answered":true,
-    "not_generated":true,
+    "question":false,
+    "query":false,
+    "results":false,
+    "show_answers":false,
+    "answered":false,
+    "not_answered":false,
+    "not_generated":false,
     "metrics":true,
-    "categories":true,
-    "group":true,
+    "categories":false,
+    "group":false,
     "group_number":3,
     "write":true
 }

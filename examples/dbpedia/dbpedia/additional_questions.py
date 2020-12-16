@@ -95,7 +95,6 @@ class PopulatedPlace(Particle):
 
 class Person(Particle):
     regex = Plus(Pos("NN") | Pos("NNS") | Pos("NNP") | Pos("NNPS") | Pos("."))
-
     def interpret(self, match):
         name = match.words.tokens
         return IsPerson() + HasKeyword(name)
@@ -116,17 +115,19 @@ class Book(Particle):
 #-------------------------------------------ADDED CLASSES-------------------------------------------------------------------------
 
 #Question/Regex Handler (subclass of QuestionTemplate)
+
 class ActorPortrayedCharacter(QuestionTemplate):
     """
     Ex: "Which actor played Chewbacca?"
         "Who played Agent Smith in the Matrix?"
     """
 
-    acted = (Lemma("appear") | Lemma("act") | Lemma("star") | Lemma("play") | Lemma("portray"))
+    acted = (Lemma("appear") | Lemma("act") | Lemma("star") | \
+            Lemma("play") | Lemma("portray"))
     movie = (Lemma("movie") | Lemma("movies") | Lemma("film"))
-    regex = (Lemma("which") + (Lemma("actor") | Lemma("actress"))  + acted + Person() + Question(Pos(".")))
+    regex = (Lemma("which") + (Lemma("actor") | Lemma("actress")) \
+            + acted + Person() + Question(Pos(".")))
 
-    #Returns the intermediate representation of the Regex
     def interpret(self, match):
         actor = IsPerson() + StarsAs(match.person)
         actor_name = NameOf(actor)
