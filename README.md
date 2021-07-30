@@ -1,11 +1,9 @@
 
-#Instalação
-
-Para instalar o nosso repositório:
+# Installation
 
 ```
-#desinstalar anterior
+#uninstall previous quepy versions
 pip uninstall quepy
-#cd para a página do repositório
+cd SBC_quepy_project
 pip install -e ./
 ```
